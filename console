@@ -1,0 +1,90 @@
+#!/usr/bin/python3
+
+# sdr console
+# ktheis <theis.kurt@gmail.com>
+# 4/8/2018
+# uses rtl_fm for rx, rpitx for transmit
+# derived from: https://likegeeks.com/python-gui-examples-tkinter-tutorial/
+
+# needs to be run by python3
+# needs tkinter (note case!) installed: "sudo apt-get install python3-tk"
+
+from tkinter import *
+from tkinter.ttk import *
+import os
+
+RX1FLAG = 0
+
+### DEFINES ### 
+
+def rx1EnableClick():
+	#print("RX 1 Enabled")
+	#print("Frequency " + freq1.get() + "  Mode " + mode1.get())
+	btn2.config(text="Rx Update")
+	global RX1FLAG
+	if RX1FLAG == 1:
+		btn3.config(state=NORMAL)
+		os.system("killall rtl_fm")
+		os.system("killall play")
+	cmd = "rtl_fm -M " + mode1.get() + " -f " + freq1.get() + " -s 22500 -g 40 | play -t raw -r 22500 -e s -b 16 -c 1 -V1 - & "
+	print(cmd)
+	os.system(cmd)
+	RX1FLAG = 1
+	btn3.config(state=NORMAL)
+
+
+def rx1Disable():
+	os.system("killall rtl_fm")
+	os.system("killall play")
+	btn3.config(state=DISABLED)
+	btn2.config(text="Rx Enable")	
+
+### Main Routine ### 
+
+
+window = Tk()
+ 
+window.title("SDR Console v1.0")
+window.geometry('450x250')
+
+### ROW 0 ###
+ 
+lbl = Label(window, text=" Receiver 1 ")
+lbl.grid(column=3, row=0)
+
+### ROW 1 ###
+
+lblMode = Label(window, text="Mode ")
+lblMode.grid(column=0, row=1)
+
+mode1 = Combobox(window, width=6)
+mode1['values']=('usb','lsb','am','cw','fm','wfm')
+mode1.current(4)
+mode1.grid(column=1, row=1)
+
+lblblank1 = Label(window,text="   ")
+lblblank1.grid(column=2,row=1)
+
+btn2 = Button(window, text="Rx Enable", command=rx1EnableClick)
+btn2.grid(column=3, row=1)
+
+lblblank2 = Label(window,text="   ")
+lblblank2.grid(column=4,row=1)
+
+lblFreq1 = Label(window, text="Freq ")
+lblFreq1.grid(column=5,row=1)
+
+freq1 = Entry(window,width=10)
+freq1.delete(0,END)
+freq1.insert(0,"146.460M")
+freq1.grid(column=6,row=1)
+
+lblblank3 = Label(window,text="   ")
+lblblank3.grid(column=7,row=1)
+
+btn3 = Button(window,text="Rx Disable", command=rx1Disable,state=DISABLED)
+btn3.grid(column=8, row=1)
+
+### CALLBACK ###
+
+window.mainloop()
