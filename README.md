@@ -1,3 +1,5 @@
+Please NOTE: this code is a stub, and not complete code.
+
 This is a simple console application for setting frequency
 and mode for rtl dongles, and transmitting using rpitx. 
 It runs in Python3 using the tkinter library.
